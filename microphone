@@ -1,0 +1,4 @@
+#! /usr/bin/env sh
+
+# toggle microphone in pamixer
+pamixer --source 1 -t

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+case $1 in
+    dmenu)
+        dmenu_run;;
+    rofi) 
+        rofi -show drun -theme ~/.config/rofi/theme/app-menu.rasi ;;
+esac

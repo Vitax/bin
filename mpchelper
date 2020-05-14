@@ -1,0 +1,14 @@
+#/usr/bin/env bash
+
+case $1 in 
+    next|-n)
+        mpc -q next 
+        ;;
+    prev|-p)
+        mpc -q prev 
+        ;;
+    toggle|-t)
+        mpc -q toggle 
+        ;;
+    *)
+esac

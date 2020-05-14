@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+byte=1024
+base=10
+
+[ "$1" ] || { read -r inp ; set -- $inp ; }
+
+# terabyte
+if [[ $1 -gt $(( $byte * $byte * $byte )) ]] ; then
+    res=$(( $(( $1 * $base )) / $(( $byte * $byte * $byte )) ))
+    pow=G
+# megabyte
+elif [[ $1 -gt $(( $byte * $byte )) ]] ; then
+    res=$(( $(( $1 * $base )) / $(( $byte * $byte)) ))
+    pow=M
+# kilobyte
+elif [[ $1 -gt $byte ]] ; then
+    res=$(( $(( $1 * $base )) / $byte ))
+    pow=K
+else
+    printf '%sB\n' ${1:-0}
+    exit
+fi
+
+printf "%s$pow\n" "${res%?}.${res#${res%?}}"

@@ -1,0 +1,23 @@
+# !/usr/bin/env sh
+
+#
+## xrandr commands retreived from:
+## https://superuser.com/questions/196532/how-do-i-find-out-my-screen-resolution-from-a-shell-script
+#
+
+usage() {
+    printf '%s\n' "dimensions [display] [-w] [-h]"
+}
+
+[ -z "$1" ] || [ -z "$2" ] && usage
+
+if [ $2 ]; then
+    case $2 in
+        width|-w)
+            xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f1
+            ;;
+        height|-h)
+            xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f2
+            ;;
+    esac
+fi

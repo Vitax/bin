@@ -1,0 +1,16 @@
+#! /usr/bin/env sh
+
+pkill -9 -f panel
+pkill -9 -f polybar
+
+case $1 in
+    lemonbar|-l)
+        $HOME/src/dots/lemonbar/panel &
+        ;;
+    polybar|-p)
+        polybar --reload -c $HOME/src/dots/polybar/config main &
+        ;;
+    dwm|-d)
+        dwmbar -d
+        ;;
+esac
