@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#! /bin/sh
 
 byte=1024
 base=10

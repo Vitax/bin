@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#! /bin/sh
 
 inc() {
     xbacklight -inc "$1"

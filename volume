@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#! /bin/sh
 
 usage() { 
     >&1 echo 'usage: volume [-i] [-d] [-s] [-t]' ;

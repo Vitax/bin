@@ -1,16 +1,142 @@
-#! /usr/bin/env sh
+#! /bin/sh
 
-pkill -9 -f panel
-pkill -9 -f polybar
+get_interface() {
+    for int in wlan0 eth0 lo ; do
+        case $(ifconfig $int 2>/dev/null) in
+            *active*)
+                echo $int
+                break
+        esac
+    done
+}
+
+get_vpn() {
+    vpn -i && vpn=" $(vpn -c)"
+    printf '%s' "${vpn:-  None}"
+}
+
+get_song() {
+    song=$(song 2>/dev/null)
+    case $song in
+        ytsearch*|radio.html)
+            song=loading...
+    esac
+    [ "$song" ] && printf '🎵 %s /' "$song"
+}
+
+get_ssid() {
+    int=$(get_interface)
+    case $int in
+        eth0) ssid='直 Wired' ;;
+        wlan0)
+            out=$(ifconfig $int)
+            case $out in
+                *active*)
+                    out=${out##*'nwid '}
+                    out=${out##*'join '}
+                    out=${out%%' chan'*}
+                    ssid="直 $out"
+            esac
+    esac
+    printf '%s' "${ssid:-睊  No Internet}"
+}
+
+get_traffic() {
+    while read -r line ; do
+        set -- $line
+    done <<EOF
+    $(netstat -c 1 -w 1 -b -I $(get_interface))
+EOF
+    printf ' %s  %s' \
+        "$(printf '%s\n' "$1" | byteconvert)" \
+        "$(printf '%s\n' "$2" | byteconvert)"
+}
+
+get_mem() {
+    max=$(($(sysctl -n hw.physmem) / 1024 / 1024))
+
+    while read -r _ _ line _ ; do
+        used=$line
+    done <<-EOF
+    $(vmstat)
+EOF
+
+    printf ' %s' "${used}" #/${max}
+}
+
+get_bat() {
+    ac_state=$(cat /sys/class/power_supply/BAT0/status)
+    bat_val=$(cat /sys/class/power_supply/BAT0/capacity)
+    case $ac_state in
+        "Charging") 
+            emoji='' ;;
+        "Discharging")
+            emoji=$(get_bat_emoji $bat_val);;
+    esac
+
+    printf "%s %s%%" "$emoji" "$bat_val"
+}
+
+get_bat_emoji() {
+    if [ $1 -gt 80 ] ; then
+        emoji=' '
+    elif [ $1 -gt 60 ] ; then
+        emoji=' '
+    elif [ $1 -gt 35 ] ; then
+        emoji=' '
+    elif [ $1 -gt 10 ] ; then
+        emoji=' '
+    else
+        emoji=' '
+    fi
+
+    printf "%s" "$emoji"
+}
+
+get_vol() {
+    muted=$(pamixer --sink 0 --get-mute)
+    vol=$(volume)
+
+    if $muted = true; then
+        printf ' %s' "muted"
+    else
+        printf ' %s%%' "$vol"
+    fi
+}
+
+get_space() {
+    df -h | while read -r line ; do
+        case $line in
+            */home)
+                set -- $line
+                printf ' %s' $4
+                break
+        esac
+    done
+}
+
+get_date() {
+    printf '%s' "$(date "+%a %d %I:%M %p")"
+}
+
+print_info() {
+    printf '  %s | %s | %s \n' \
+        "$(get_bat)" \
+        "$(get_space)" \
+        "$(get_date)"
+        # "$(get_mem)" \
+        # "$(get_ssid)" \
+        # "$(get_traffic)" \
+        # "$(get_space)" \
+}
 
 case $1 in
-    lemonbar|-l)
-        $HOME/src/dots/lemonbar/panel &
+    -d)
+        xsetroot -name "$(print_info)"
+        while sleep 30; do
+            xsetroot -name "$(print_info)"
+        done
         ;;
-    polybar|-p)
-        polybar --reload -c $HOME/src/dots/polybar/config main &
-        ;;
-    dwm|-d)
-        dwmbar -d
-        ;;
+     *)
+         print_info
 esac
