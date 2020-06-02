@@ -1,2 +1,2 @@
 #! /bin/sh
-i3lock --clock -e -f -i ~/images/lockimg.jpg
+xlock

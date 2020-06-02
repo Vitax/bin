@@ -1,9 +1,11 @@
 #! /bin/sh
 
+set -e
+
 get_interface() {
-    for int in wlan0 eth0 lo ; do
+    for int in wlp5s0 enp0s31f6 lo ; do
         case $(ifconfig $int 2>/dev/null) in
-            *active*)
+            *)
                 echo $int
                 break
         esac
@@ -27,18 +29,18 @@ get_song() {
 get_ssid() {
     int=$(get_interface)
     case $int in
-        eth0) ssid='直 Wired' ;;
-        wlan0)
-            out=$(ifconfig $int)
-            case $out in
-                *active*)
-                    out=${out##*'nwid '}
-                    out=${out##*'join '}
-                    out=${out%%' chan'*}
-                    ssid="直 $out"
+        enp0s31f6) 
+            ssid='直 Wired' 
+            ;;
+        wlp5s0)
+            connected=$(iw dev $int link | grep "Connected")
+            case $connected in
+                *Connected*)
+                    ssid="直 $(iw dev $int link | grep "SSID:" | cut -d " " -f2)"
+                    ;;
             esac
     esac
-    printf '%s' "${ssid:-睊  No Internet}"
+    printf '%s' "${ssid:-睊 No Internet}"
 }
 
 get_traffic() {
@@ -68,10 +70,15 @@ get_bat() {
     ac_state=$(cat /sys/class/power_supply/BAT0/status)
     bat_val=$(cat /sys/class/power_supply/BAT0/capacity)
     case $ac_state in
+        "Not charging")
+            emoji=' '
+            ;;
         "Charging") 
-            emoji='' ;;
+            emoji=''
+            ;;
         "Discharging")
-            emoji=$(get_bat_emoji $bat_val);;
+            emoji=$(get_bat_emoji $bat_val)
+            ;;
     esac
 
     printf "%s %s%%" "$emoji" "$bat_val"
@@ -120,14 +127,13 @@ get_date() {
 }
 
 print_info() {
-    printf '  %s | %s | %s \n' \
+    printf '  %s  %s  %s  %s  \n' \
         "$(get_bat)" \
         "$(get_space)" \
+        "$(get_ssid)" \
         "$(get_date)"
-        # "$(get_mem)" \
-        # "$(get_ssid)" \
         # "$(get_traffic)" \
-        # "$(get_space)" \
+        # "$(get_mem)" \
 }
 
 case $1 in
