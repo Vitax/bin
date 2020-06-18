@@ -1,3 +1,0 @@
-#! /bin/sh
-
-sudo iw dev wlp5s0 scan | grep "SSID:"

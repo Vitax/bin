@@ -5,6 +5,13 @@ case $1 in
         dmenu_run
         ;;
     rofi) 
-        rofi -show drun -theme ~/.config/rofi/theme/app-menu_dark.rasi
+        case $2 in
+            --dark|-d)
+                rofi -show drun -theme ~/.config/rofi/theme/app-menu_dark.rasi
+                ;;
+            --light|-l)
+                rofi -show drun -theme ~/.config/rofi/theme/app-menu_light.rasi
+                ;;
+        esac
         ;;
 esac

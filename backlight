@@ -8,10 +8,17 @@ dec() {
     xbacklight -dec "$1"
 }
 
+_set() {
+    xbacklight -set "$1"
+}
+
 case "$1" in
     inc|-i)
         inc "$2" ;;
     dec|-d)
         dec "$2" ;;
+    set|-s)
+        _set "$2"
+        ;;
     *)
 esac
