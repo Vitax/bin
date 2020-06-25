@@ -11,14 +11,14 @@ usage() {
 }
 
 case "$1" in
-    -scan|-s)
+    --scan|-s)
         sudo iw dev wlp5s0 scan | grep "SSID:" ;
         ;;
-    -connect|-c)
+    --connect|-c)
         sudo pkill wpa_supplicant ;
         sudo wpa_supplicant -B -i wlp5s0 -c $2
         ;;
-    -disconnect|-d)
+    --disconnect|-d)
         sudo pkill wpa_supplicant ;
         ;;
     *)

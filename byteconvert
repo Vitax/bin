@@ -1,24 +1,28 @@
 #! /bin/sh
+#
+# http://github.com/mitchweaver/bin
+#
+# convert bytes to human readable format
+#
+# Ex:
+#    6579057657 -> '6.1G'
+#    562952382  -> '536.8M'
+#
+# shellcheck disable=2086
+#
+[ $1 ] || { read -r inp ; set -- "$inp" ; }
 
-byte=1024
-base=10
-
-[ "$1" ] || { read -r inp ; set -- $inp ; }
-
-# terabyte
-if [ $1 > $(( $byte * $byte * $byte )) ] ; then
-    res=$(( $(( $1 * $base )) / $(( $byte * $byte * $byte )) ))
+if [ $1 -gt 1073741824 ] ; then
+    res=$(( $1 * 10 / 1073741824 ))
     pow=G
-# megabyte
-elif [ $1 > $(( $byte * $byte )) ] ; then
-    res=$(( $(( $1 * $base )) / $(( $byte * $byte)) ))
+elif [ $1 -gt 1048576 ] ; then
+    res=$(( $1 * 10 / 1048576 ))
     pow=M
-# kilobyte
-elif [ $1 > $byte ] ; then
-    res=$(( $(( $1 * $base )) / $byte ))
+elif [ $1 -gt 1024 ] ; then
+    res=$(( $1 * 10 / 1024 ))
     pow=K
 else
-    printf '%sB\n' ${1:-0}
+    printf '%sB\n' "${1:-0}"
     exit
 fi
 

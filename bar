@@ -3,13 +3,15 @@
 set -e
 
 get_interface() {
-    for int in wlp5s0 enp0s31f6 lo ; do
-        case $(ifconfig $int 2>/dev/null) in
+    while read -r int _ ; do
+        case $int in
+            Inter*|*face)
+                # garbage
+                ;;
             *)
-                echo $int
-                break
+                printf '%s\n' "${int%:}"
         esac
-    done
+    done </proc/net/wireless
 }
 
 get_vpn() {
@@ -27,29 +29,61 @@ get_song() {
 }
 
 get_ssid() {
-    int=$(get_interface)
-    case $int in
-        enp0s31f6) 
-            ssid='直 Wired' 
+    case $(get_interface) in
+        eth[0-9]|enp[0-9]s[0-9][0-9])
+            essid=Wired
             ;;
-        wlp5s0)
-            if [ -z $(iw dev $int link | grep "Connected") ]; then
-                ssid="直 $(iw dev $int link | grep "SSID:" | cut -d " " -f2)"
-            fi
-            ;;
+        *)
+read -r _ _ _ essid <<-EOF
+$(iwconfig "$(get_interface)" 2>/dev/null)
+EOF
     esac
-    printf '%s' "${ssid:-睊 No Internet}"
+
+    case $essid in
+        *':off/'*)
+            ;;
+        *)
+            e=
+            ssid=${essid%\"*}
+            ssid=${ssid#*\"}
+    esac
+    printf '%s  %s' "${e:-❌}"  "${ssid:-No Internet}"
+}
+
+get_link_qual() {
+    iwconfig "$(get_interface)" 2>/dev/null | \
+    while read -r line ; do
+        case $line in
+            *'Link Quality'*)
+                line=${line%/*}
+                line=${line#*=}
+                line=$((line * 100 / 70))
+                printf '%s%%' $line
+                break
+        esac
+    done
 }
 
 get_traffic() {
-    while read -r line ; do
-        set -- $line
-    done <<EOF
-    $(netstat -c 1 -w 1 -b -I $(get_interface))
-EOF
+   int=$(get_interface)
+    if [ -f "/sys/class/net/$int/statistics/rx_bytes" ] ; then
+        read -r rx <"/sys/class/net/$int/statistics/rx_bytes"
+        read -r tx <"/sys/class/net/$int/statistics/tx_bytes"
+    fi
     printf ' %s  %s' \
-        "$(printf '%s\n' "$1" | byteconvert)" \
-        "$(printf '%s\n' "$2" | byteconvert)"
+        "$(printf '%s\n' "${rx:-0}" | byteconvert)" \
+        "$(printf '%s\n' "${tx:-0}" | byteconvert)"
+}
+
+get_traffic() {
+   int=$(get_interface)
+    if [ -f "/sys/class/net/$int/statistics/rx_bytes" ] ; then
+        read -r rx <"/sys/class/net/$int/statistics/rx_bytes"
+        read -r tx <"/sys/class/net/$int/statistics/tx_bytes"
+    fi
+    printf ' %s  %s' \
+        "$(printf '%s\n' "${rx:-0}" | byteconvert)" \
+        "$(printf '%s\n' "${tx:-0}" | byteconvert)"
 }
 
 get_mem() {
@@ -65,55 +99,29 @@ EOF
 }
 
 get_bat() {
-     acpi --battery 0 | while read -r line; do
-        set -- $line
-        ac_state=$(printf "%s" $3 | sed 's/[,]//g')
-        bat_val=$(printf "%s" $4 | sed 's/[%,]//g')
-        bat_time=$(printf "%s" $5 | sed 's@\(..\):\(..\):\(..\)@\1:\2@')
-
-        case $ac_state in
-            "Charging")
-                emoji='' ;;
-            "Discharging")
-                emoji=$(get_bat_emoji $bat_val);;
-            "Not")
-                bat_val=$(printf "%s" $5 | sed 's/[%,]//g')
-                emoji=$(get_bat_emoji $bat_val) ;;
-        esac
-
-        if [ $ac_state = "Not" ]; then
-            printf "%s %s%%" "$emoji" "$bat_val"
-        else
-            printf "%s %s%% %s" "$emoji" "$bat_val" "$bat_time"
-        fi
-    done
-}
-
-get_bat_emoji() {
-    if [ $1 -gt 80 ] ; then
-        emoji=' '
-    elif [ $1 -gt 60 ] ; then
-        emoji=' '
-    elif [ $1 -gt 35 ] ; then
-        emoji=' '
-    elif [ $1 -gt 10 ] ; then
-        emoji=' '
-    else
-        emoji=' '
-    fi
-
-    printf "%s" "$emoji"
+    read -r p </sys/class/power_supply/BAT0/capacity
+    read -r s </sys/class/power_supply/AC/online
+    case $s in
+        1) e='' ;;
+        0) case ${p%?} in
+               [8-9]|10) e='' ;;
+               [6-7]) e='' ;;
+               [3-5]) e='' ;;
+               [1-2]) e='' ;;
+                   *) e=''
+           esac
+    esac
+    printf "$e  %s%%" "$p"
 }
 
 get_vol() {
-    muted=$(pamixer --sink 0 --get-mute)
     vol=$(volume)
-
-    if $muted = true; then
-        printf ' %s' "muted"
-    else
-        printf ' %s%%' "$vol"
-    fi
+    case ${vol%??} in
+        [7-9]) emoji='' ;;
+        [2-6]) emoji='' ;;
+            *) emoji=''
+    esac
+    printf "$emoji %s%%" "$vol"
 }
 
 get_space() {
@@ -128,23 +136,25 @@ get_space() {
 }
 
 get_date() {
-    printf '%s' "$(date "+%a %d %I:%M %p")"
+    printf '%s' "$(date "+(%a) %b %d %I:%M %p")"
 }
 
 print_info() {
-    printf '  %s  %s  %s  \n' \
-        "$(get_bat)" \
+    D='  '
+    printf " %s$D%s$D%s$D%s$D%s$D%s \n" \
+        "$(get_ssid)" \
+        "$(get_traffic)" \
         "$(get_space)" \
+        "$(get_bat)" \
+        "$(get_vol)" \
         "$(get_date)"
-        # "$(get_ssid)" \
-        # "$(get_traffic)" \
         # "$(get_mem)" \
 }
 
 case $1 in
     -d)
         xsetroot -name "$(print_info)"
-        while sleep 30; do
+        while sleep 1; do
             xsetroot -name "$(print_info)"
         done
         ;;
