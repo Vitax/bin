@@ -1,0 +1,36 @@
+#! /bin/sh
+#
+# http://github.com/Vitax
+#
+# Script to manage wifi connectivity
+#
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} [--scan|-s, --connect|-c <wpa_file>,
+    >--disconnect|-d]"
+    exit 1
+}
+
+_scan() {
+    sudo iw dev wlp5s0 scan | grep "SSID:" ;
+}
+
+_connect() {
+    sudo wpa_supplicant -B -i wlp5s0 -c $2
+}
+
+_disconnect() {
+    sudo pkill --9 wpa_supplicant
+}
+
+case "$1" in
+    --scan|-s)
+        _scan ;;
+    --connect|-c)
+        _disconnect & _connect ;;
+    --disconnect|-d)
+        _disconnect ;;
+    *)
+        usage
+        ;;
+esac

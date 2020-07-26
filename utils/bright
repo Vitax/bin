@@ -12,13 +12,20 @@ _set() {
     xbacklight -set "$1"
 }
 
+get() {
+    xbacklight -get
+}
+
 case "$1" in
-    inc|-i)
+    --inc|-i)
         inc "$2" ;;
-    dec|-d)
+    --dec|-d)
         dec "$2" ;;
-    set|-s)
+    --set|-s)
         _set "$2"
         ;;
+    --get|-g)
+        get ;;
     *)
+        get ;;
 esac

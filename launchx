@@ -1,3 +1,0 @@
-#! /bin/sh
-
-xinit ${HOME}/src/dots/xinitrc -- /usr/bin/X -nolisten tcp :0 vt5 -keeptty

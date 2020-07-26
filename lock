@@ -1,2 +1,0 @@
-#! /bin/sh
-i3lock -i ~/.cache/i3lock/current/blur.png -e -f -n -k -u

@@ -1,0 +1,110 @@
+#!/bin/sh
+#
+# http://github.com/vitax
+#
+# Helper script to generate colorscheme headers for suckless tools
+#
+
+set -e
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} []"
+    exit 1
+}
+
+gen_st() {
+cat > ${XDG_CACHE_HOME}/themes/st.h << EOF
+    const char *colorname[] = {
+      [0] = "$color0",
+      [1] = "$color1",
+      [2] = "$color2",
+      [3] = "$color3",
+      [4] = "$color4",
+      [5] = "$color5",
+      [6] = "$color6",
+      [7] = "$color7",
+      [8]  = "$color8",
+      [9]  = "$color9",
+      [10] = "$color10",
+      [11] = "$color11",
+      [12] = "$color12",
+      [13] = "$color13",
+      [14] = "$color14",
+      [15] = "$color15",
+      [256] = "$background",
+      [257] = "$foreground",
+      [258] = "$cursorcolor",
+    };
+
+    unsigned int defaultbg = 256;
+    unsigned int defaultfg = 257;
+
+    unsigned int mousebg = 256;
+    unsigned int mousefg = 257;
+
+    unsigned int defaultcs = 258;
+    unsigned int defaultrcs = 257;
+EOF
+}
+
+gen_dwm() {
+cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
+    static const char *colors[][3]      = {
+        [SchemeNorm] = { "$foreground", "$background", "$background" },
+        [SchemeSel]  = { "$foreground", "$color6", "$color4" },
+        [SchemeUrg] =  { "$foreground", "$color1", "$color1" },
+    };
+EOF
+}
+
+gen_dmenu() {
+cat > ${XDG_CACHE_HOME}/themes/dmenu.h << EOF
+    static const char *colors[SchemeLast][2] = {
+        [SchemeNorm] = { "$foreground", "$background" },
+        [SchemeSel]  = { "$foreground", "$color6" },
+        [SchemeOut]  = { "$foreground", "$color5" },
+    };
+EOF
+}
+
+gen_tabbed() {
+cat > ${XDG_CACHE_HOME}/themes/tabbed.h << EOF
+    static const char* selfgcolor   = "$foreground";
+    static const char* selbgcolor   = "$background";
+    static const char* normfgcolor  = "$foreground";
+    static const char* normbgcolor  = "$color2";
+    static const char* urgfgcolor   = "$foreground";
+    static const char* urgbgcolor   = "$color1";
+EOF
+}
+
+rebuild() {
+    # rebuild suckless tools
+    ${HOME}/src/suckless/build st dwm dmenu tabbed
+
+    # rebuild start pa
+    if type sassc >/dev/null ; then
+        # generate web browser startpage css
+        # this also copies to to my site
+        (cd ${XDG_DOCUMENTS_DIR}/src/wvr.sh ; make)
+    fi
+}
+
+main() {
+    # Cleanup or create themes
+    mkdir -p ${XDG_CACHE_HOME}/themes
+
+    # source color.sh
+    . ~/src/dots/themes/current.sh
+
+    # generate colorscheme headers
+    gen_st
+    gen_dwm
+    gen_tabbed
+    gen_dmenu
+
+    # rebuild suckless tools
+    rebuild
+}
+
+main "$@"

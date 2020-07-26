@@ -1,0 +1,3 @@
+#! /bin/sh
+
+xinit ${HOME}/.xinitrc -- /usr/bin/X -nolisten tcp :0 vt5 -keeptty
