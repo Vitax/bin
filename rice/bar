@@ -6,7 +6,7 @@ get_interface() {
     while read -r int _ ; do
         case $int in
             Inter*|*face)
-                ifconfig -l
+                # garbage
                 ;;
             *)
                 printf '%s\n' "${int%:}"
@@ -29,25 +29,24 @@ get_song() {
 }
 
 get_ssid() {
+    e=""
+    ssid="No Internet"
     case $(get_interface) in
         eth[0-9]|enp[0-9]s[0-9][0-9])
-            essid=Wired
+            ssid=Wired
             ;;
-        *)
-read -r _ _ _ essid <<-EOF
-$(iw "$(get_interface)" info | grep ssid 2>/dev/null)
-EOF
+        wlp[0-9]s[0-9])
+            essid=$(iw "$(get_interface)" info | grep ssid)
+            if [ ! -z "$essid" ]; then
+                e=
+                set -- $essid
+                ssid=" $2"
+            fi
+            ;;
     esac
 
-    case $essid in
-        *':off/'*)
-            ;;
-        *)
-            e=
-            ssid=${essid%\"*}
-            ssid=${ssid#*\"}
-    esac
-    printf '%s  %s' "${e:-❌}"  "${ssid:-No Internet}"
+
+    printf '%s%s' "$e" "$ssid"
 }
 
 get_link_qual() {
@@ -71,8 +70,8 @@ get_traffic() {
         read -r tx <"/sys/class/net/$int/statistics/tx_bytes"
     fi
     printf ' %s  %s' \
-        "$(printf '%s\n' "${rx:-0}" | byteconvert)" \
-        "$(printf '%s\n' "${tx:-0}" | byteconvert)"
+        "$(printf '%s\n' "${rx:-0}" | human)" \
+        "$(printf '%s\n' "${tx:-0}" | human)"
 }
 
 get_mem() {
@@ -103,27 +102,17 @@ get_bat() {
     printf "$e  %s%%" "$p"
 }
 
-get_bright() {
-    printf " %.f%%" "$(bright)"
-}
-
-get_vol() {
-    val=$(vol)
-    case ${val%??} in
-        [7-9]) emoji='' ;;
-        [2-6]) emoji='' ;;
-            *) emoji=''
-    esac
-    printf "$emoji %s" "$val"
-}
-
 get_space() {
     df -h | while read -r line ; do
         case $line in
-            */home)
+            */)
                 set -- $line
                 printf ' %s' $4
-                break
+                ;;
+            */home)
+                set -- $line
+                printf '  ﴥ %s' $4
+                ;;
         esac
     done
 }
@@ -133,22 +122,19 @@ get_date() {
 }
 
 print_info() {
-    D='  '
-    printf " %s$D%s$D%s$D%s$D%s$D%s \n" \
+    printf "  [ %s ]  [ %s ]  [ %s ]  [ %s ]  [ %s ] \n" \
         "$(get_traffic)" \
+        "$(get_ssid)" \
         "$(get_space)" \
         "$(get_bat)" \
-        "$(get_bright)" \
-        "$(get_vol)" \
         "$(get_date)"
-        # "$(get_ssid)" \
         # "$(get_mem)" \
 }
 
 case $1 in
     -d)
         xsetroot -name "$(print_info)"
-        while sleep 1; do
+        while sleep 15; do
             xsetroot -name "$(print_info)"
         done
         ;;

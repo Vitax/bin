@@ -2,7 +2,8 @@
 #
 # http://github.com/vitax
 #
-# Helper script to generate colorscheme headers for suckless tools
+# Helper script to generate colorscheme headers for suckless tools and various
+# other environments
 #
 
 set -e
@@ -51,8 +52,8 @@ gen_dwm() {
 cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
     static const char *colors[][3]      = {
         [SchemeNorm] = { "$foreground", "$background", "$background" },
-        [SchemeSel]  = { "$foreground", "$color6", "$color4" },
-        [SchemeUrg] =  { "$foreground", "$color1", "$color1" },
+        [SchemeSel]  = { "$foreground", "$color3", "$color6" },
+        [SchemeUrg] =  { "$foreground", "$color1", "$color1" }
     };
 EOF
 }
@@ -72,22 +73,19 @@ cat > ${XDG_CACHE_HOME}/themes/tabbed.h << EOF
     static const char* selfgcolor   = "$foreground";
     static const char* selbgcolor   = "$background";
     static const char* normfgcolor  = "$foreground";
-    static const char* normbgcolor  = "$color2";
+    static const char* normbgcolor  = "$color8";
     static const char* urgfgcolor   = "$foreground";
     static const char* urgbgcolor   = "$color1";
 EOF
 }
 
-rebuild() {
-    # rebuild suckless tools
-    ${HOME}/src/suckless/build st dwm dmenu tabbed
+copy_shell_theme() {
+    cp ${XDG_DOCUMENTS_DIR}/src/dots/themes/current.sh ${XDG_CACHE_HOME}/themes
+}
 
-    # rebuild start pa
-    if type sassc >/dev/null ; then
-        # generate web browser startpage css
-        # this also copies to to my site
-        (cd ${XDG_DOCUMENTS_DIR}/src/wvr.sh ; make)
-    fi
+rebuild_suckless() {
+    # rebuild suckless tools
+    ${XDG_DOCUMENTS_DIR}/src/suckless/build st dwm dmenu tabbed
 }
 
 main() {
@@ -95,7 +93,7 @@ main() {
     mkdir -p ${XDG_CACHE_HOME}/themes
 
     # source color.sh
-    . ~/src/dots/themes/current.sh
+    . ${XDG_DOCUMENTS_DIR}/src/dots/themes/current.sh
 
     # generate colorscheme headers
     gen_st
@@ -103,8 +101,13 @@ main() {
     gen_tabbed
     gen_dmenu
 
-    # rebuild suckless tools
-    rebuild
+    copy_shell_theme
+
+    echo "Generated themes!"
+
+    rebuild_suckless
+
+    echo "Reuild complete!"
 }
 
 main "$@"

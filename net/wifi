@@ -6,8 +6,7 @@
 #
 
 usage() {
-    >&2 printf '%s\n' "Usage: ${0##*/} [--scan|-s, --connect|-c <wpa_file>,
-    >--disconnect|-d]"
+    >&2 printf '%s\n' "Usage: ${0##*/} [--scan|-s, --connect|-c <wpa_file>, --disconnect|-d]"
     exit 1
 }
 
@@ -16,18 +15,19 @@ _scan() {
 }
 
 _connect() {
-    sudo wpa_supplicant -B -i wlp5s0 -c $2
+    sudo wpa_supplicant -B -i wlp5s0 -c $1 -D nl80211
 }
 
 _disconnect() {
-    sudo pkill --9 wpa_supplicant
+    sudo pkill wpa_supplicant
 }
 
 case "$1" in
     --scan|-s)
         _scan ;;
     --connect|-c)
-        _disconnect & _connect ;;
+        _disconnect 
+        _connect $2 ;;
     --disconnect|-d)
         _disconnect ;;
     *)

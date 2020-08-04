@@ -1,0 +1,103 @@
+#!/bin/sh
+
+#
+# http://github.com/vitax
+#
+# Script to help handle multihead scenarious for mobile workstations
+#
+
+set -e
+
+MAIN_SCREEN="eDP1"
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} [ --connect | -c or --disconnect | -d ]" 
+    >&2 printf '\t\t\t\t %s\n' "[ HDMI-[0-9] or DP-[0-9] ]"
+    >&2 printf '\t\t\t\t %s\n' "[ --left | -l ] [ --right | -r ] [ --above | -a ] [--below | -b ] "
+
+}
+
+connect() {
+    ouput_screen=$1
+    direction=$2
+    xrandr --output $ouput_screen "$direction" "$MAIN_SCREEN" --auto
+}
+
+disconnect() {
+    xrandr --output $1 --off
+}
+
+main() {
+
+    case $1 in
+        --connect|-c)
+            case $2 in
+                HDMI[0-9])
+                    case $3 in
+                        --above|-a)
+                            connect $2 --above
+                            ;;
+                        --below|-b)
+                            connect $2 --below
+                            ;;
+                        --left|-l)
+                            connect $2 "--left-of"
+                            ;;
+                        --right|-r)
+                            connect $2 --right-of
+                            ;;
+                        *)
+                            usage
+                            ;;
+                    esac
+                    ;;
+                DP[0-9])
+                    case $3 in
+                        --above|-a)
+                            connect $2 --above
+                            ;;
+                        --below|-b)
+                            connect $2 --below
+                            ;;
+                        --left|-l)
+                            connect $2 --left-of
+                            ;;
+                        --right|-r)
+                            connect $2 --right-of
+                            ;;
+                        *)
+                            usage
+                            ;;
+                    esac
+                    ;;
+                *)
+                    usage
+                    ;;
+            esac
+            ;;
+        --disconnect|-d)
+            case $2 in
+                HDMI-[0-9])
+                    disconnect $2
+                    ;;
+                DP[0-9])
+                    disconnect $2
+                    ;;
+                *)
+                    usage
+                    ;;
+            esac
+            ;;
+        --auto|-a)
+            xrandr --auto
+            ;;
+        --help|-h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+}
+
+main "$@"

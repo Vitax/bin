@@ -2,7 +2,7 @@
 
 case $1 in
     dmenu)
-        dmenu_run
+        dmenu_run -p " " -h 36 -w 1420 -y 40 -x 250
         ;;
     rofi) 
         case $2 in
