@@ -14,7 +14,7 @@ usage() {
     >&2 printf '%s\n' "Usage: ${0##*/} [ --connect | -c or --disconnect | -d ]" 
     >&2 printf '\t\t\t\t %s\n' "[ HDMI-[0-9] or DP-[0-9] ]"
     >&2 printf '\t\t\t\t %s\n' "[ --left | -l ] [ --right | -r ] [ --above | -a ] [--below | -b ] "
-
+    exit
 }
 
 connect() {
@@ -27,8 +27,11 @@ disconnect() {
     xrandr --output $1 --off
 }
 
-main() {
+set_background() {
+    [ -f $HOME/.fehbg ] || $HOME/.fehbg
+}
 
+main() {
     case $1 in
         --connect|-c)
             case $2 in
@@ -88,7 +91,7 @@ main() {
                     ;;
             esac
             ;;
-        --auto|-a)
+        --clean|-cl)
             xrandr --auto
             ;;
         --help|-h)
@@ -98,6 +101,7 @@ main() {
             usage
             ;;
     esac
+    set_background    
 }
 
 main "$@"

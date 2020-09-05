@@ -38,7 +38,7 @@ get_ssid() {
         wlp[0-9]s[0-9])
             essid=$(iw "$(get_interface)" info | grep ssid)
             if [ ! -z "$essid" ]; then
-                e=
+                e=" "
                 set -- $essid
                 ssid=" $2"
             fi
@@ -111,7 +111,7 @@ get_space() {
                 ;;
             */home)
                 set -- $line
-                printf '  ﴥ %s' $4
+                printf '   %s' $4
                 ;;
         esac
     done
@@ -122,7 +122,7 @@ get_date() {
 }
 
 print_info() {
-    printf "  [ %s ]  [ %s ]  [ %s ]  [ %s ]  [ %s ] \n" \
+    printf " %s  %s  %s  %s  %s \n" \
         "$(get_traffic)" \
         "$(get_ssid)" \
         "$(get_space)" \

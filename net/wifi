@@ -16,10 +16,12 @@ _scan() {
 
 _connect() {
     sudo wpa_supplicant -B -i wlp5s0 -c $1 -D nl80211
+    sudo dhcpcd wlp5s0
 }
 
 _disconnect() {
     sudo pkill wpa_supplicant
+    sudo pkill dhcpcd
 }
 
 case "$1" in

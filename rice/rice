@@ -52,8 +52,8 @@ gen_dwm() {
 cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
     static const char *colors[][3]      = {
         [SchemeNorm] = { "$foreground", "$background", "$background" },
-        [SchemeSel]  = { "$foreground", "$color3", "$color6" },
-        [SchemeUrg] =  { "$foreground", "$color1", "$color1" }
+        [SchemeSel]  = { "$foreground", "$color6", "$color3" },
+        [SchemeUrg] =  { "$color1", "$background", "$color1" }
     };
 EOF
 }
@@ -62,7 +62,7 @@ gen_dmenu() {
 cat > ${XDG_CACHE_HOME}/themes/dmenu.h << EOF
     static const char *colors[SchemeLast][2] = {
         [SchemeNorm] = { "$foreground", "$background" },
-        [SchemeSel]  = { "$foreground", "$color6" },
+        [SchemeSel]  = { "$color0", "$color6" },
         [SchemeOut]  = { "$foreground", "$color5" },
     };
 EOF
@@ -79,6 +79,62 @@ cat > ${XDG_CACHE_HOME}/themes/tabbed.h << EOF
 EOF
 }
 
+gen_xresources() {
+    cp -f ${XDG_DOCUMENTS_DIR}/src/dots/.Xresources ${HOME}/.Xresources
+
+cat >> ${HOME}/.Xresources << EOF
+    *background: $background
+    *foreground: $foreground
+
+    *cursorColor: $cursorcolor
+
+    *color0: $color0
+    *color1: $color1
+    *color2: $color2
+    *color3: $color3
+    *color4: $color4
+    *color5: $color5
+    *color6: $color6
+    *color7: $color7
+    *color8: $color8
+    *color9: $color9
+    *color10: $color10
+    *color11: $color11
+    *color12: $color12
+    *color13: $color13
+    *color14: $color14
+    *color15: $color15
+EOF
+}
+
+gen_conf() {
+cat >> ${XDG_CACHE_HOME}/themes/theme.conf << EOF
+    background $background
+    foreground $foreground
+
+    cursor $cursorcolor
+    cursor_text_color $background
+
+    color0 $color0
+    color1 $color1
+    color2 $color2
+    color3 $color3
+    color4 $color4
+    color5 $color5
+    color6 $color6
+    color7 $color7
+    color8 $color8
+    color9 $color9
+    color10 $color10
+    color11 $color11
+    color12 $color12
+    color13 $color13
+    color14 $color14
+    color15 $color15
+EOF
+
+}
+
 copy_shell_theme() {
     cp ${XDG_DOCUMENTS_DIR}/src/dots/themes/current.sh ${XDG_CACHE_HOME}/themes
 }
@@ -88,6 +144,19 @@ rebuild_suckless() {
     ${XDG_DOCUMENTS_DIR}/src/suckless/build st dwm dmenu tabbed
 }
 
+generate() {
+    # generate colorscheme headers
+    gen_st
+    gen_dwm
+    gen_tabbed
+    gen_dmenu
+
+    gen_xresources
+    gen_conf
+
+    copy_shell_theme
+}
+
 main() {
     # Cleanup or create themes
     mkdir -p ${XDG_CACHE_HOME}/themes
@@ -95,19 +164,18 @@ main() {
     # source color.sh
     . ${XDG_DOCUMENTS_DIR}/src/dots/themes/current.sh
 
-    # generate colorscheme headers
-    gen_st
-    gen_dwm
-    gen_tabbed
-    gen_dmenu
+    case $1 in
+        -b|--build)
+            generate
+            rebuild_suckless
+            notify-send "Suckless tools rebuild ! Restart dwm to apply changes ..."
+            ;;
+        *)
+            generate
+            notify-send "Theme files generated !"
+            ;;
+    esac
 
-    copy_shell_theme
-
-    echo "Generated themes!"
-
-    rebuild_suckless
-
-    echo "Reuild complete!"
 }
 
 main "$@"

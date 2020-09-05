@@ -14,10 +14,10 @@ usage() {
 if [ $2 ]; then
     case $2 in
         width|-w)
-            xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f1
+            xrandr --screen $1 | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f1
             ;;
         height|-h)
-            xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f2
+            xrandr --screen $1 | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f2
             ;;
     esac
 fi
