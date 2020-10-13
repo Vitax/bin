@@ -1,2 +1,0 @@
-#! /bin/sh
-st -T 'Simple Terminal' -t 'Simple Terminal' -c 'Simple Terminal'

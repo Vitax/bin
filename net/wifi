@@ -21,15 +21,14 @@ _connect() {
 
 _disconnect() {
     sudo pkill wpa_supplicant
-    sudo pkill dhcpcd
 }
 
 case "$1" in
     --scan|-s)
         _scan ;;
     --connect|-c)
-        _disconnect 
-        _connect $2 ;;
+        _disconnect ; _connect $2 ;
+        ;;
     --disconnect|-d)
         _disconnect ;;
     *)

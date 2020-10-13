@@ -1,3 +1,4 @@
 #! /bin/sh
 
-i3lock -i ~/.cache/lockimage.* --greetertext="Locked from the Outside!" --greetercolor=#FFFFFF -k -e --timecolor=FFFFFF --datecolor=FFFFFF --indicator -f -t
+slock
+# i3lock -i ~/.cache/lockimage.* --greetertext="Locked from the Outside!" --greetercolor=#FFFFFF -k -e --timecolor=FFFFFF --datecolor=FFFFFF --indicator -f -t

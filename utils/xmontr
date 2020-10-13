@@ -27,10 +27,6 @@ disconnect() {
     xrandr --output $1 --off
 }
 
-set_background() {
-    [ -f $HOME/.fehbg ] || $HOME/.fehbg
-}
-
 main() {
     case $1 in
         --connect|-c)
@@ -101,7 +97,6 @@ main() {
             usage
             ;;
     esac
-    set_background    
 }
 
 main "$@"

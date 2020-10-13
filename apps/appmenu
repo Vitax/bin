@@ -5,5 +5,11 @@ case $1 in
         dmenu_run -p " " -h 36 -w 1420 -y 40 -x 250
         ;;
     rofi) 
-        rofi -show-icons -modi "drun,run,window" -show drun -theme $2
+        case $2 in
+            -t)
+                rofi -show drun -theme $3
+                ;;
+            *) 
+                rofi -show drun
+        esac
 esac

@@ -15,67 +15,67 @@ usage() {
 
 gen_st() {
 cat > ${XDG_CACHE_HOME}/themes/st.h << EOF
-    const char *colorname[] = {
-      [0] = "$color0",
-      [1] = "$color1",
-      [2] = "$color2",
-      [3] = "$color3",
-      [4] = "$color4",
-      [5] = "$color5",
-      [6] = "$color6",
-      [7] = "$color7",
-      [8]  = "$color8",
-      [9]  = "$color9",
-      [10] = "$color10",
-      [11] = "$color11",
-      [12] = "$color12",
-      [13] = "$color13",
-      [14] = "$color14",
-      [15] = "$color15",
-      [256] = "$background",
-      [257] = "$foreground",
-      [258] = "$cursorcolor",
-    };
+const char *colorname[] = {
+  [0] = "$color0",
+  [1] = "$color1",
+  [2] = "$color2",
+  [3] = "$color3",
+  [4] = "$color4",
+  [5] = "$color5",
+  [6] = "$color6",
+  [7] = "$color7",
+  [8]  = "$color8",
+  [9]  = "$color9",
+  [10] = "$color10",
+  [11] = "$color11",
+  [12] = "$color12",
+  [13] = "$color13",
+  [14] = "$color14",
+  [15] = "$color15",
+  [256] = "$background",
+  [257] = "$foreground",
+  [258] = "$cursorcolor",
+};
 
-    unsigned int defaultbg = 256;
-    unsigned int defaultfg = 257;
+unsigned int defaultbg = 256;
+unsigned int defaultfg = 257;
 
-    unsigned int mousebg = 256;
-    unsigned int mousefg = 257;
+unsigned int mousebg = 256;
+unsigned int mousefg = 257;
 
-    unsigned int defaultcs = 258;
-    unsigned int defaultrcs = 257;
+unsigned int defaultcs = 258;
+unsigned int defaultrcs = 257;
 EOF
 }
 
 gen_dwm() {
 cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
-    static const char *colors[][3]      = {
-        [SchemeNorm] = { "$foreground", "$background", "$background" },
-        [SchemeSel]  = { "$foreground", "$color6", "$color3" },
-        [SchemeUrg] =  { "$color1", "$background", "$color1" }
-    };
+static const char *colors[][3]      = {
+    [SchemeNorm] = { "$foreground", "$background", "$background" },
+    [SchemeSel]  = { "$foreground", "$color6", "$color3" },
+    [SchemeUrg] =  { "$color1", "$background", "$color1" }
+};
 EOF
 }
 
 gen_dmenu() {
 cat > ${XDG_CACHE_HOME}/themes/dmenu.h << EOF
-    static const char *colors[SchemeLast][2] = {
-        [SchemeNorm] = { "$foreground", "$background" },
-        [SchemeSel]  = { "$color0", "$color6" },
-        [SchemeOut]  = { "$foreground", "$color5" },
-    };
+static const char *colors[SchemeLast][2] = {
+    [SchemeNorm] = { "$foreground", "$background" },
+    [SchemeSel]  = { "$color0", "$color6" },
+    [SchemeOut]  = { "$foreground", "$color5" },
+};
 EOF
 }
 
 gen_tabbed() {
 cat > ${XDG_CACHE_HOME}/themes/tabbed.h << EOF
-    static const char* selfgcolor   = "$foreground";
-    static const char* selbgcolor   = "$background";
-    static const char* normfgcolor  = "$foreground";
-    static const char* normbgcolor  = "$color8";
-    static const char* urgfgcolor   = "$foreground";
-    static const char* urgbgcolor   = "$color1";
+static const char* selfgcolor   = "$foreground";
+static const char* selbgcolor   = "$background";
+static const char* normfgcolor  = "$foreground";
+static const char* normbgcolor  = "$color8";
+static const char* urgfgcolor   = "$foreground";
+static const char* urgbgcolor   = "$color1";
 EOF
 }
 
@@ -83,54 +83,54 @@ gen_xresources() {
     cp -f ${XDG_DOCUMENTS_DIR}/src/dots/.Xresources ${HOME}/.Xresources
 
 cat >> ${HOME}/.Xresources << EOF
-    *background: $background
-    *foreground: $foreground
+*background: $background
+*foreground: $foreground
 
-    *cursorColor: $cursorcolor
+*cursorColor: $cursorcolor
 
-    *color0: $color0
-    *color1: $color1
-    *color2: $color2
-    *color3: $color3
-    *color4: $color4
-    *color5: $color5
-    *color6: $color6
-    *color7: $color7
-    *color8: $color8
-    *color9: $color9
-    *color10: $color10
-    *color11: $color11
-    *color12: $color12
-    *color13: $color13
-    *color14: $color14
-    *color15: $color15
+*color0: $color0
+*color1: $color1
+*color2: $color2
+*color3: $color3
+*color4: $color4
+*color5: $color5
+*color6: $color6
+*color7: $color7
+*color8: $color8
+*color9: $color9
+*color10: $color10
+*color11: $color11
+*color12: $color12
+*color13: $color13
+*color14: $color14
+*color15: $color15
 EOF
 }
 
 gen_conf() {
 cat >> ${XDG_CACHE_HOME}/themes/theme.conf << EOF
-    background $background
-    foreground $foreground
+background $background
+foreground $foreground
 
-    cursor $cursorcolor
-    cursor_text_color $background
+cursor $cursorcolor
+cursor_text_color $background
 
-    color0 $color0
-    color1 $color1
-    color2 $color2
-    color3 $color3
-    color4 $color4
-    color5 $color5
-    color6 $color6
-    color7 $color7
-    color8 $color8
-    color9 $color9
-    color10 $color10
-    color11 $color11
-    color12 $color12
-    color13 $color13
-    color14 $color14
-    color15 $color15
+color0 $color0
+color1 $color1
+color2 $color2
+color3 $color3
+color4 $color4
+color5 $color5
+color6 $color6
+color7 $color7
+color8 $color8
+color9 $color9
+color10 $color10
+color11 $color11
+color12 $color12
+color13 $color13
+color14 $color14
+color15 $color15
 EOF
 
 }
@@ -157,6 +157,10 @@ generate() {
     copy_shell_theme
 }
 
+reload_all() {
+    xrdb ${HOME}/.Xresources
+}
+
 main() {
     # Cleanup or create themes
     mkdir -p ${XDG_CACHE_HOME}/themes
@@ -175,6 +179,8 @@ main() {
             notify-send "Theme files generated !"
             ;;
     esac
+
+    reload_all
 
 }
 

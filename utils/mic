@@ -1,4 +1,0 @@
-#! /bin/sh
-
-# toggle microphone in pamixer
-pamixer --source 1 -t
