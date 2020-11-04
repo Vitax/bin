@@ -51,8 +51,8 @@ EOF
 gen_dwm() {
 cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
 static const char *colors[][3]      = {
-    [SchemeNorm] = { "$foreground", "$background", "$background" },
-    [SchemeSel]  = { "$foreground", "$color6", "$color3" },
+    [SchemeNorm] = { "$foreground", "$background", "$color8" },
+    [SchemeSel]  = { "$color0", "$color4", "$color3" },
     [SchemeUrg] =  { "$color1", "$background", "$color1" }
 };
 EOF

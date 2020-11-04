@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# http://github.com/vitax
+#
+# [automatically generated template text]
+#
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} []"
+    exit 1
+}
+
+get_mem() {
+    echo $(free -h | awk '/^Mem/ { print $3 }' | sed s/i//g)
+}
+
+main() {
+    get_mem
+}
+
+main "$@"

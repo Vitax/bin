@@ -1,0 +1,23 @@
+#! /bin/sh
+
+get_bat() {
+    read -r p </sys/class/power_supply/BAT0/capacity
+    read -r s </sys/class/power_supply/AC/online
+    case $s in
+        1) e='' ;;
+        0) case ${p%?} in
+               [8-9]|10) e=' ' ;;
+               [6-7]) e=' ' ;;
+               [3-5]) e=' ' ;;
+               [1-2]) e=' ' ;;
+                   *) e=' '
+           esac
+    esac
+    printf "$e  %s%% \n" "$p"
+}
+
+main() {
+    get_bat
+}
+
+main "$@"
