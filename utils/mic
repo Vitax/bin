@@ -1,0 +1,65 @@
+#!/bin/sh
+#
+# http://github.com/vitax
+#
+# [automatically generated template text]
+#
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} [default get volume]
+           [-t toggle]
+           [-s|--set <val>]
+           [-i|--increase <val>]
+           [-d|--decrease <val>]"
+    exit 1
+}
+
+toggle_mute() {
+    pamixer --source 1 -t
+}
+
+inc() {
+    pamixer --source 1 -i $1
+}
+
+dec() {
+    pamixer --source 1 -d $1
+}
+_set() {
+    if [ "$1" -gt 100 ] ; then
+        set 100
+    elif [ "$1" -lt 0 ] ; then
+        set 0
+    fi
+
+    pamixer --source 1 --set-volume $1
+}
+
+get() {
+    pamixer --source 1 --get-volume-human
+}
+
+main() {
+    case $1 in
+        -h|--help)
+            usage
+            ;;
+        -t|--toggle)
+            toggle_mute
+            ;;
+        -i|--increase)
+            inc $2
+            ;;
+        -d|--decrease)
+            dec $2
+            ;;
+        -s|--set)
+            set $2
+            ;;
+        *)
+            get
+            ;;
+    esac
+}
+
+main "$@"
