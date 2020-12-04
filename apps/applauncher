@@ -1,0 +1,25 @@
+#! /bin/sh
+set -e
+
+launch_rofi() {
+    rofi -show drun $@
+}
+
+launch_dmenu() {
+    dmenu_run $@
+}
+
+main() {
+    case $1 in
+        dmenu)
+            shift
+            launch_dmenu "$@"
+            ;;
+        rofi) 
+            shift
+            launch_rofi "$@"
+            ;;
+    esac
+}
+
+main "$@"

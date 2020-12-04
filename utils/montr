@@ -27,6 +27,10 @@ disconnect() {
     xrandr --output $1 --off
 }
 
+set_wallpaper() {
+    [ -f ${HOME}/.fehbg ] || sh ${HOME}/.fehbg
+}
+
 main() {
     case $1 in
         --connect|-c)
@@ -34,16 +38,20 @@ main() {
                 HDMI[0-9])
                     case $3 in
                         --above|-a)
-                            connect $2 --above
+                            connect $2 --above ;
+                            set_wallpaper
                             ;;
                         --below|-b)
-                            connect $2 --below
+                            connect $2 --below ;
+                            set_wallpaper
                             ;;
                         --left|-l)
-                            connect $2 "--left-of"
+                            connect $2 --left-of ;
+                            set_wallpaper
                             ;;
                         --right|-r)
-                            connect $2 --right-of
+                            connect $2 --right-of ;
+                            set_wallpaper
                             ;;
                         *)
                             usage
@@ -53,16 +61,20 @@ main() {
                 DP[0-9])
                     case $3 in
                         --above|-a)
-                            connect $2 --above
+                            connect $2 --above ;
+                            set_wallpaper
                             ;;
                         --below|-b)
-                            connect $2 --below
+                            connect $2 --below ;
+                            set_wallpaper
                             ;;
                         --left|-l)
-                            connect $2 --left-of
+                            connect $2 --left-of ;
+                            set_wallpaper
                             ;;
                         --right|-r)
-                            connect $2 --right-of
+                            connect $2 --right-of ;
+                            set_wallpaper
                             ;;
                         *)
                             usage

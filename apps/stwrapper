@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# http://github.com/vitax
+#
+# [automatically generated template text]
+#
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} []"
+    exit 1
+}
+
+main() {
+    echo hi
+}
+
+main "$@"

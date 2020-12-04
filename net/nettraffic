@@ -29,7 +29,7 @@ get_traffic() {
         read -r rx <"/sys/class/net/$int/statistics/rx_bytes"
         read -r tx <"/sys/class/net/$int/statistics/tx_bytes"
     fi
-    printf '  %s   %s' \
+    printf ' %s  %s' \
         "$(printf '%s\n' "${rx:-0}" | human)" \
         "$(printf '%s\n' "${tx:-0}" | human)"
 }
