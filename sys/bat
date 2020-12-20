@@ -18,7 +18,8 @@ get_bat() {
                    *) e=''
            esac
     esac
-    printf "$e %s%%\n" "$p"
+
+    printf '%s\n' "$e $p%"  
 }
 
 main() {

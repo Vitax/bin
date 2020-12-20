@@ -5,7 +5,14 @@ inc() {
 }
 
 dec() {
-    xbacklight -dec "$1"
+    cur_bright=$(get)
+    if [ $cur_bright = "1%" ] ;  then
+        break;
+    elif [ $cur_bright-$1 < 0 ] ;  then
+        $(_set 1)
+    else
+        xbacklight -dec "$1"
+    fi
 }
 
 _set() {

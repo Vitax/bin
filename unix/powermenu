@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# http://github.com/vitax
+#
+# [automatically generated template text]
+#
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} []"
+    exit 1
+}
+
+suspend() {
+    sudo echo mem > /sys/power/state &
+    lock -slock
+}
+
+main() {
+    case "$(echo -e "Shutdown\nRestart\nLogout\nSuspend\nLock" | dmenu \
+        -b -i -p \
+        "Power:")" in
+            Shutdown) exec sudo shutdown;;
+            Restart) exec sudo reboot;;
+            Logout) logout;;
+            Suspend) $suspend;;
+            Lock) lock -slock;;
+    esac
+}
+
+main "$@"

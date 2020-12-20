@@ -11,15 +11,16 @@ usage() {
 }
 
 _scan() {
-    sudo iw dev wlp5s0 scan | grep "SSID:" ;
+    sudo iwlist wlan0 scan | grep "ESSID:" | less ;
 }
 
 _connect() {
-    sudo wpa_supplicant -B -i wlp5s0 -c $1 -D nl80211
-    sudo dhcpcd wlp5s0
+    sudo wpa_supplicant -B -i wlan0 -c $1 -D nl80211
+    sudo udhcpc -i wlan0
 }
 
 _disconnect() {
+    sudo pkill udhcpc
     sudo pkill wpa_supplicant
 }
 

@@ -1,3 +1,16 @@
 #! /bin/sh
 
-slock
+lock() {
+    case $1 in
+        -slock)
+            slock
+            ;;
+        -i3lock)
+            i3lock
+            ;;
+        -betterscreenlocker)
+            ;;
+    esac
+}
+
+lock "$@"

@@ -10,12 +10,8 @@ usage() {
     exit 1
 }
 
-get_mem() {
-    echo $(free -b | awk '/^Mem/ { print $3 }' | sed s/i//g | human)
-}
-
 main() {
-    get_mem
+    printf '%s' $(date '+%a, %b %d')
 }
 
 main "$@"

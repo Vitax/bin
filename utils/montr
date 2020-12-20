@@ -11,9 +11,9 @@ set -e
 MAIN_SCREEN="eDP1"
 
 usage() {
-    >&2 printf '%s\n' "Usage: ${0##*/} [ --connect | -c or --disconnect | -d ]" 
-    >&2 printf '\t\t\t\t %s\n' "[ HDMI-[0-9] or DP-[0-9] ]"
-    >&2 printf '\t\t\t\t %s\n' "[ --left | -l ] [ --right | -r ] [ --above | -a ] [--below | -b ] "
+    >&2 printf '%s\n' "Usage: ${0##*/} [ --connect | -c] <device> or [ --auto | -a ]" 
+    >&2 printf '\t\t\t %s\n' "[ --disconnect | -d ]"
+    >&2 printf '\t\t\t %s\n' "[ --left | -l ] [ --right | -r ] [ --above | -a] [--below | -b ] "
     exit
 }
 
@@ -99,7 +99,7 @@ main() {
                     ;;
             esac
             ;;
-        --clean|-cl)
+        --auto|-a)
             xrandr --auto
             ;;
         --help|-h)
