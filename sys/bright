@@ -6,9 +6,9 @@ inc() {
 
 dec() {
     cur_bright=$(get)
-    if [ $cur_bright = "1%" ] ;  then
+    if [ $cur_bright = "1" ] ;  then
         break;
-    elif [ $cur_bright-$1 < 0 ] ;  then
+    elif [ $cur_bright-$1 -le 1 ] ;  then
         $(_set 1)
     else
         xbacklight -dec "$1"
@@ -20,8 +20,16 @@ _set() {
 }
 
 get() {
-    printf "%.0f%%\n" $(xbacklight -get)
+    case $1 in
+        --human|-h)
+            printf "%.0f%%\n" $(xbacklight -get)
+            ;;
+        *)
+            printf "%.0f\n" $(xbacklight -get)
+            ;;
+    esac
 }
+
 
 case "$1" in
     --inc|-i)
@@ -32,7 +40,7 @@ case "$1" in
         _set "$2"
         ;;
     --get|-g)
-        get ;;
+        get "$2" ;;
     *)
-        get ;;
+        get -h;;
 esac

@@ -28,7 +28,7 @@ disconnect() {
 }
 
 set_wallpaper() {
-    [ -f ${HOME}/.fehbg ] || sh ${HOME}/.fehbg
+    [ -f ${HOME}/.fehbg ] && ${HOME}/.fehbg
 }
 
 main() {
