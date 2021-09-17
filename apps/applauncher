@@ -1,22 +1,26 @@
-#! /bin/sh
-set -e
+#! /bin/sh -e
 
 launch_rofi() {
-    rofi -show drun $@
+    rofi -show drun "$@"
 }
 
 launch_dmenu() {
-    dmenu_run $@
+    dmenu_run "$@"
 }
 
 main() {
-    case $1 in
+    if [ ! -z "$1" ]; then
+        flag="$1"
+        shift
+    else
+        return
+    fi
+
+    case $flag in
         dmenu)
-            shift
             launch_dmenu "$@"
             ;;
-        rofi) 
-            shift
+        rofi)
             launch_rofi "$@"
             ;;
     esac

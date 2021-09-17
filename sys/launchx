@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+x=$(which X)
+
+xinit ${HOME}/.xinitrc -- $x -nolisten tcp :0

@@ -10,8 +10,23 @@ usage() {
     exit 1
 }
 
+launch_st() {
+    st -t "Suckless Terminal" -T "Suckless Terminal" -c "Suckless Terminal"
+}
+
+launch_st_tabbed() {
+    tabbed -c -r 2 st -w ''
+}
+
 main() {
-    echo hi
+    case $1 in
+        t)
+            launch_st_tabbed
+            ;;
+        *)
+            launch_st
+            ;;
+    esac
 }
 
 main "$@"

@@ -1,18 +1,11 @@
-#! /bin/sh
+#!/bin/sh -e
 
 inc() {
     xbacklight -inc "$1"
 }
 
 dec() {
-    cur_bright=$(get)
-    if [ $cur_bright = "1" ] ;  then
-        break;
-    elif [ $cur_bright-$1 -le 1 ] ;  then
-        $(_set 1)
-    else
-        xbacklight -dec "$1"
-    fi
+    xbacklight -dec "$1"
 }
 
 _set() {
@@ -20,27 +13,27 @@ _set() {
 }
 
 get() {
-    case $1 in
-        --human|-h)
-            printf "%.0f%%\n" $(xbacklight -get)
-            ;;
-        *)
-            printf "%.0f\n" $(xbacklight -get)
-            ;;
-    esac
+    printf "%.0f\n" $(xbacklight -get)
 }
 
 
-case "$1" in
-    --inc|-i)
-        inc "$2" ;;
-    --dec|-d)
-        dec "$2" ;;
-    --set|-s)
-        _set "$2"
-        ;;
-    --get|-g)
-        get "$2" ;;
-    *)
-        get -h;;
-esac
+main() {
+    flag="$1"
+    case $flag in
+        --inc|-i)
+            shift
+            inc "$1" ;;
+        --dec|-d)
+            shift
+            dec "$1" ;;
+        --set|-s)
+            shift
+            _set "$1" ;;
+        --get|-g)
+            get ;;
+        *)
+            get ;;
+    esac
+}
+
+main "$@"

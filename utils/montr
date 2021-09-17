@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 #
 # http://github.com/vitax
@@ -6,12 +6,10 @@
 # Script to help handle multihead scenarious for mobile workstations
 #
 
-set -e
-
 MAIN_SCREEN="eDP1"
 
 usage() {
-    >&2 printf '%s\n' "Usage: ${0##*/} [ --connect | -c] <device> or [ --auto | -a ]" 
+    >&2 printf '%s\n' "Usage: ${0##*/} [ --connect | -c] <device> or [ --auto | -a ]"
     >&2 printf '\t\t\t %s\n' "[ --disconnect | -d ]"
     >&2 printf '\t\t\t %s\n' "[ --left | -l ] [ --right | -r ] [ --above | -a] [--below | -b ] "
     exit
@@ -21,6 +19,7 @@ connect() {
     ouput_screen=$1
     direction=$2
     xrandr --output $ouput_screen "$direction" "$MAIN_SCREEN" --auto
+        set_wallpaper
 }
 
 disconnect() {
@@ -31,81 +30,41 @@ set_wallpaper() {
     [ -f ${HOME}/.fehbg ] && ${HOME}/.fehbg
 }
 
+get_direction() {
+    direction="$1"
+    case $direction in
+        --above|-a)
+            printf '%s' "--above"
+            ;;
+        --below|-b)
+            printf '%s' "--below"
+            ;;
+        --left|-l)
+            printf '%s' "--left-of"
+            set_wallpaper
+            ;;
+        --right|-r)
+            printf '%s' "--right-of"
+            set_wallpaper
+            ;;
+    esac
+}
+
 main() {
-    case $1 in
+    flag="$1"
+    shift
+    case $flag in
         --connect|-c)
-            case $2 in
-                HDMI[0-9])
-                    case $3 in
-                        --above|-a)
-                            connect $2 --above ;
-                            set_wallpaper
-                            ;;
-                        --below|-b)
-                            connect $2 --below ;
-                            set_wallpaper
-                            ;;
-                        --left|-l)
-                            connect $2 --left-of ;
-                            set_wallpaper
-                            ;;
-                        --right|-r)
-                            connect $2 --right-of ;
-                            set_wallpaper
-                            ;;
-                        *)
-                            usage
-                            ;;
-                    esac
-                    ;;
-                DP[0-9])
-                    case $3 in
-                        --above|-a)
-                            connect $2 --above ;
-                            set_wallpaper
-                            ;;
-                        --below|-b)
-                            connect $2 --below ;
-                            set_wallpaper
-                            ;;
-                        --left|-l)
-                            connect $2 --left-of ;
-                            set_wallpaper
-                            ;;
-                        --right|-r)
-                            connect $2 --right-of ;
-                            set_wallpaper
-                            ;;
-                        *)
-                            usage
-                            ;;
-                    esac
-                    ;;
-                *)
-                    usage
-                    ;;
-            esac
+            direction=get_direction $2
+            connect $1 $direction
             ;;
         --disconnect|-d)
-            case $2 in
-                HDMI-[0-9])
-                    disconnect $2
-                    ;;
-                DP[0-9])
-                    disconnect $2
-                    ;;
-                *)
-                    usage
-                    ;;
-            esac
+            disconnect $1
             ;;
         --auto|-a)
             xrandr --auto
             ;;
         --help|-h)
-            usage
-            ;;
-        *)
             usage
             ;;
     esac

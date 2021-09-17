@@ -7,36 +7,31 @@
 
 usage() {
     >&2 printf '%s\n' "Usage: ${0##*/} [default get volume]
-           [-t toggle]
-           [-s|--set <val>]
-           [-i|--increase <val>]
-           [-d|--decrease <val>]"
+    [-t toggle]
+    [-s|--set <val>]
+    [-i|--increase <val>]
+    [-d|--decrease <val>]"
     exit 1
 }
 
 toggle_mute() {
-    pamixer --source 1 -t
+    amixer sset Capture toggle
 }
 
 inc() {
-    pamixer --source 1 -i $1
+    amixer sset Catpure $1+
 }
 
 dec() {
-    pamixer --source 1 -d $1
+    amixer sset Catpure $1-
 }
-_set() {
-    if [ "$1" -gt 100 ] ; then
-        set 100
-    elif [ "$1" -lt 0 ] ; then
-        set 0
-    fi
 
-    pamixer --source 1 --set-volume $1
+_set() {
+    amixer sset Catpure $1
 }
 
 get() {
-    pamixer --source 1 --get-volume-human
+    amixer sget Catpure
 }
 
 main() {
@@ -54,7 +49,7 @@ main() {
             dec $2
             ;;
         -s|--set)
-            set $2
+            _set $2
             ;;
         *)
             get

@@ -1,41 +1,44 @@
 #! /bin/sh
 
-usage() { 
+usage() {
     >&2 echo 'usage: volume [-i value] [-d value] [-s value] [-t]' ;
     exit 1 ;
 }
 
 inc() {
-    pamixer --sink 0 -i $1
+    amixer sset Master $1+
 }
 
 dec() {
-    pamixer --sink 0 -d $1
+    amixer sset Master $1-
 }
 
 toggle() {
-    pamixer --sink 0 -t
+    amixer sset Master toggle
 }
 
 get() {
-    pamixer --sink 0 --get-volume-human
+    amixer sget Master $1
+}
+
+mute() {
+    amixer sset Master mute
 }
 
 _set() {
-    if [ "$1" -gt 100 ] ; then
-        set 100
-    elif [ "$1" -lt 0 ] ; then
-        set 0
-    fi
-
-    pamixer --sink 0 --set-volume $1
+    amixer sset Master $1
 }
 
-case "$1" in
-    --inc|-i) inc  "$2" ;;
-    --dec|-d) dec  "$2" ;;
-    --set|-s) _set "$2" ;;
-    --toggle|-t) toggle ;;
-    --help|-h) usage ;;
-     *) get
-esac
+main() {
+    case "$1" in
+        --inc|-i) inc  "$2" ;;
+        --dec|-d) dec  "$2" ;;
+        --set|-s) _set "$2" ;;
+        --mute|-m) mute "$2" ;;
+        --toggle|-t) toggle ;;
+        --help|-h) usage ;;
+        *) get
+    esac
+}
+
+main "$@"

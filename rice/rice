@@ -1,16 +1,14 @@
-#!/bin/sh
+#!/bin/sh -e
 #
 # http://github.com/vitax
 #
-# Helper script to generate colorscheme headers for suckless tools and various
-# other environments
+# Helper script to generate colorscheme headers for suckless tools, xorg and various
+# other applications
 #
-
-set -e
 
 usage() {
     >&2 printf '%s\n' "Usage of ${0##*/}:"
-    >&2 printf '\t%s\n' "[-g|--generate] generate all files required for dwm, st, dmenu, xresources and kitty]"
+    >&2 printf '\t%s\n' "[-g|--generate] generate all files required for dwm, st, dmenu, xorg and kitty]"
     >&2 printf '\t%s\n' "[-b|--build <st dwm dmenu tabbed>] generate and build suckless tools"
     exit 1
 }
@@ -18,7 +16,8 @@ usage() {
 # generate a header file for st containing the scheme configuration properties
 gen_st() {
 cat > ${XDG_CACHE_HOME}/themes/st.h << EOF
-const char *colorname[] = {
+const char *colorname[] =
+{
   [0] = "$color0",
   [1] = "$color1",
   [2] = "$color2",
@@ -54,10 +53,11 @@ EOF
 # generate header file for dwm containing the scheme configuration properties
 gen_dwm() {
 cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
-static const char *colors[][3] = {
-    [SchemeNorm] = { "$foreground", "$background", "$color8" },
-    [SchemeSel]  = { "$foreground", "$color1", "$color3" },
-    [SchemeUrg] =  { "$color1", "$background", "$color1" }
+static const char *colors[][3] =
+{
+    [SchemeNorm] = { "$color7", "$color0", "$color7" },
+    [SchemeSel] = { "$color15", "$color1", "$color1" },
+    [SchemeUrg] = { "$color1", "$background", "$color1" },
 };
 EOF
 }
@@ -65,10 +65,11 @@ EOF
 # generate header file for dmenu containing the scheme configuration properties
 gen_dmenu() {
 cat > ${XDG_CACHE_HOME}/themes/dmenu.h << EOF
-static const char *colors[SchemeLast][2] = {
-    [SchemeNorm] = { "$foreground", "$background" },
-    [SchemeSel]  = { "$color0", "$color6" },
-    [SchemeOut]  = { "$foreground", "$color5" },
+static const char *colors[SchemeLast][2] =
+{
+    [SchemeNorm] = { "$color15", "$color0" },
+    [SchemeSel]  = { "$color0", "$color1" },
+    [SchemeOut]  = { "$color0", "$color5" },
 };
 EOF
 }
@@ -76,18 +77,19 @@ EOF
 # generate header file for tabbed containing the scheme configuration properties
 gen_tabbed() {
 cat > ${XDG_CACHE_HOME}/themes/tabbed.h << EOF
-static const char* selfgcolor   = "$foreground";
-static const char* selbgcolor   = "$background";
-static const char* normfgcolor  = "$foreground";
+static const char* selfgcolor   = "$color1";
+static const char* selbgcolor   = "$color8";
+static const char* normfgcolor  = "$color7";
 static const char* normbgcolor  = "$color8";
-static const char* urgfgcolor   = "$foreground";
+static const char* urgfgcolor   = "$color0";
 static const char* urgbgcolor   = "$color1";
 EOF
 }
 
 # extend the local xrescources file with the current selected scheme
 gen_xresources() {
-    cp -f ${XDG_DOCUMENTS_DIR}/src/dots/.Xresources ${HOME}/.Xresources
+    rm ${HOME}/.Xresources
+    cp -f ${XDG_FILES_DIR}/dots/Xresources ${HOME}/.Xresources
 
 cat >> ${HOME}/.Xresources << EOF
 *background: $background
@@ -113,6 +115,7 @@ cat >> ${HOME}/.Xresources << EOF
 *color15: $color15
 EOF
 }
+
 
 # this config file can be used for applications such as kitty
 gen_conf() {
@@ -147,12 +150,12 @@ copy_shell_theme() {
     [ ! -d ${XDG_CACHE_HOME} ] && mkdir ${XDG_CACHE_HOME}
     [ ! -d ${XDG_CACHE_HOME}/themes ] && mkdir ${XDG_CACHE_HOME}/themes
 
-    cp -f ${XDG_DOCUMENTS_DIR}/src/dots/themes/current.sh ${XDG_CACHE_HOME}/themes
+    cp -f ${XDG_FILES_DIR}/dots/themes/current.sh ${XDG_CACHE_HOME}/themes
 }
 
 # rebuild suckless tools
 build_suckless() {
-    ${XDG_DOCUMENTS_DIR}/src/suckless/build "$@"
+    ${XDG_FILES_DIR}/src/suckless/build "$@"
 }
 
 # generate all files used for ricing
@@ -173,25 +176,30 @@ reload_xrdb() {
     xrdb ${HOME}/.Xresources
 }
 
+create_notification() {
+    if command -v notify-send > /dev/null ; then
+        notify-send "$@"
+    fi
+}
+
 # main function
 main() {
     # Cleanup or create themes
     mkdir -p ${XDG_CACHE_HOME}/themes
 
     # source color.sh
-    . ${XDG_DOCUMENTS_DIR}/src/dots/themes/current.sh
+    . ${XDG_FILES_DIR}/dots/themes/current.sh
 
     case $1 in
         -g|--generate)
             generate
-            notify-send "Theme files generated !"
+            create_notification "Theme files generated !"
             ;;
         -b|--build)
             generate
             shift
             build_suckless "$@"
-            notify-send "Building suckless tools complete! Take according steps
-            toapply changes ..."
+            create_notification "Building suckless tools complete! Take according steps to apply changes ..."
             ;;
         -h|--help)
             usage
@@ -205,3 +213,4 @@ main() {
 }
 
 main "$@"
+

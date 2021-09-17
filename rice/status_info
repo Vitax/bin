@@ -1,0 +1,93 @@
+#!/bin/sh -e
+SCRIPTS_DIR=${HOME}/bin/sys
+
+# MODULES
+update_time () {
+    time=$(printf '%s\n' "$(date "+ %a %d %b %I:%M %p")")
+}
+
+update_weather () {
+    case $net in
+        *Offline)
+            weather=" No Data"
+            ;;
+        *)
+            weather=$(printf ' %s\n' "$(curl -s 'wttr.in/?format=1' | sed 's/.* //')")
+            ;;
+    esac
+}
+
+update_battery() {
+    battery=$(printf '%s\n' "$(${SCRIPTS_DIR}/bat)")
+}
+
+update_network() {
+    # lan=$(cat /sys/class/net/enp0s31f6/carrier)
+    wifi=$(cat /sys/class/net/wlp5s0/carrier)
+
+    if [ ! -z "$wifi" ] || [ $wifi == 1 ]; then
+        ssid=$(iw wlp5s0 info | grep ssid | cut -d " " -f2)
+        net="直 $ssid"
+    # elif [ ! -z "$lan" ] || [ $lan == 1 ]; then
+    #     net="囹Lan"
+    else
+        net="睊 Offline"
+    fi
+
+    net=$(printf '%s\n' "$net")
+}
+
+display () {
+    xsetroot -name " $weather  $net  $battery  $time"
+}
+
+display_lemonbar() {
+    printf '%s\n' "%{l} $time %{r} $weather  $net  $battery "
+}
+
+start() {
+    # SIGNALLING
+    # trap	"<function>;display"		"RTMIN+n"
+    # to update it from external commands
+    # where m = 34 + n
+
+    # modules that don't update on their own need to be run at
+    # the start for getting their initial value
+    while true; do
+        sleep 1 & wait && {
+            # to update item ever n seconds with a offset of m
+                    ## [ $((sec % n)) -eq m ] && udpate_item
+                    [ $((sec % 30 )) -eq 0 ] && update_time
+                    [ $((sec % 180)) -eq 1 ] && update_weather
+                    [ $((sec % 15 )) -eq 0 ] && update_battery
+                    [ $((sec % 5 )) -eq 0 ] && update_network
+
+            # how often the display updates ( 5 seconds )
+            case $1 in
+                lemonbar)
+                    [ $((sec % 5 )) -eq 0 ] && display_lemonbar
+                    ;;
+                dwm)
+                    [ $((sec % 5 )) -eq 0 ] && display
+                    ;;
+            esac
+            sec=$((sec + 1))
+        }
+done
+}
+
+main() {
+    case $1 in
+        lemonbar)
+            start $1
+            ;;
+        dwm)
+            start $1
+            ;;
+        *)
+            start dwm
+            ;;
+    esac
+}
+
+main "$@"
