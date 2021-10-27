@@ -17,9 +17,9 @@ usage() {
 
 connect() {
     ouput_screen=$1
-    direction=$2
-    xrandr --output $ouput_screen "$direction" "$MAIN_SCREEN" --auto
-        set_wallpaper
+    direction=$(get_direction $2)
+    xrandr --output $ouput_screen $direction $MAIN_SCREEN --auto
+    set_wallpaper
 }
 
 disconnect() {
@@ -55,8 +55,7 @@ main() {
     shift
     case $flag in
         --connect|-c)
-            direction=get_direction $2
-            connect $1 $direction
+            connect $1 $2
             ;;
         --disconnect|-d)
             disconnect $1

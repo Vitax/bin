@@ -15,8 +15,9 @@ _scan() {
 }
 
 _connect() {
-    sudo wpa_supplicant -B -i wlp5s0 -c $1
-    sudo dhcpcd -i wlp5s0
+    wlp=$(ip addr | grep wlp | cut -d ' ' -f2)
+    sudo wpa_supplicant -B -i $wlp -c $1
+    sudo dhcpcd -i $wlp
 }
 
 _disconnect() {
