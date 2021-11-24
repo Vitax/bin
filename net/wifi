@@ -11,13 +11,16 @@ usage() {
 }
 
 _scan() {
-    sudo ifconfig wlan0 scan ;
+    wlan=$(ip addr | grep wl | cut -d ' ' -f2)
+
+    sudo iw dev $wlan scan | grep -i ssid | nvim ;
 }
 
 _connect() {
-    wlp=$(ip addr | grep wlp | cut -d ' ' -f2)
-    sudo wpa_supplicant -B -i $wlp -c $1
-    sudo dhcpcd -i $wlp
+    wlan=$(ip addr | grep wl | cut -d ' ' -f2)
+
+    sudo wpa_supplicant -B -i $wlan -c $1
+    sudo dhcpcd -i $wlan
 }
 
 _disconnect() {
@@ -29,10 +32,12 @@ case "$1" in
     --scan|-s)
         _scan ;;
     --connect|-c)
-        _disconnect ; _connect $2 ;
+	_disconnect ;
+	_connect $2 ;
         ;;
     --disconnect|-d)
-        _disconnect ;;
+        _disconnect 
+	;;
     *)
         usage
         ;;

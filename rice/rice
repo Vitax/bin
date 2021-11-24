@@ -55,9 +55,12 @@ gen_dwm() {
 cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
 static const char *colors[][3] =
 {
-    [SchemeNorm] = { "$color15", "$color0", "$color7" },
-    [SchemeSel] = { "$color0", "$color4", "$color1" },
+    /* ["type"] = foreground, background, border */
+    [SchemeNorm] = { "$foreground", "$background", "$color7" },
+    [SchemeSel] = { "$foreground", "$color7", "$color1" },
     [SchemeUrg] = { "$color1", "$background", "$color1" },
+    [SchemeTabNorm] = { "$foreground", "$background", "$color7" },
+    [SchemeTabSel] = { "$color15", "$color4", "$color7" },
 };
 EOF
 }
@@ -77,11 +80,11 @@ EOF
 # generate header file for tabbed containing the scheme configuration properties
 gen_tabbed() {
 cat > ${XDG_CACHE_HOME}/themes/tabbed.h << EOF
-static const char* selfgcolor   = "$color1";
-static const char* selbgcolor   = "$color8";
-static const char* normfgcolor  = "$color7";
-static const char* normbgcolor  = "$color8";
-static const char* urgfgcolor   = "$color0";
+static const char* selfgcolor   = "$foreground";
+static const char* selbgcolor   = "$color7";
+static const char* normfgcolor  = "$foreground";
+static const char* normbgcolor  = "$background";
+static const char* urgfgcolor   = "$foreground";
 static const char* urgbgcolor   = "$color1";
 EOF
 }

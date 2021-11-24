@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# http://github.com/vitax
+#
+# [automatically generated template text]
+#
+
+usage() {
+    >&2 printf '%s\n' "Usage: ${0##*/} []"
+    exit 1
+}
+
+launch_st_tabbed() {
+    tabbed -c -r 2 st  -w '' -T "Simple Terminal"
+}
+
+main() {
+    launch_st_tabbed
+}
+
+main "$@"

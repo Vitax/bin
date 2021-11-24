@@ -13,20 +13,20 @@ dec() {
     amixer sset Master $1-
 }
 
-toggle() {
-    amixer sset Master toggle
-}
-
 get() {
-    amixer sget Master $1
-}
-
-mute() {
-    amixer sset Master mute
+    awk -F"[][]" '/dB/ { print $2 }' <(amixer sget Master)
 }
 
 _set() {
     amixer sset Master $1
+}
+
+toggle() {
+    amixer sset Master toggle
+}
+
+mute() {
+    amixer sset Master mute
 }
 
 main() {
