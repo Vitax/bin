@@ -19,15 +19,10 @@ connect() {
     ouput_screen=$1
     direction=$(get_direction $2)
     xrandr --output $ouput_screen $direction $MAIN_SCREEN --auto
-    set_wallpaper
 }
 
 disconnect() {
     xrandr --output $1 --off
-}
-
-set_wallpaper() {
-    [ -f ${HOME}/.fehbg ] && ${HOME}/.fehbg
 }
 
 get_direction() {
@@ -41,11 +36,9 @@ get_direction() {
             ;;
         --left|-l)
             printf '%s' "--left-of"
-            set_wallpaper
             ;;
         --right|-r)
             printf '%s' "--right-of"
-            set_wallpaper
             ;;
     esac
 }

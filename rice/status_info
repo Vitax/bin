@@ -1,13 +1,13 @@
 #!/bin/sh -e
-SCRIPTS_DIR=${HOME}/bin/sys
+. ${XDG_CACHE_HOME}/themes/current.sh  
 
 # MODULES
 update_time () {
-    time=$(printf ' %s\n' "$(clock)")
+    time=$(printf '%s\n' "$(clock)")
 }
 
 update_date() {
-    calendar=$(printf '  %s\n' "$(calendar)")
+    calendar=$(printf ' %s\n' "$(calendar)")
 }
 
 update_network_traffic () {
@@ -17,16 +17,16 @@ update_network_traffic () {
 update_weather () {
     case $net in
 	*Offline)
-	    weather="  No Data"
+	    weather=" No Data"
 	    ;;
 	*)
-	    weather=$(printf '  %s\n' "$(curl -s 'wttr.in/?format=1' | sed 's/.* //')")
+	    weather=$(printf ' %s\n' "$(curl -s 'wttr.in/?format=1' | sed 's/.* //')")
 	    ;;
     esac
 }
 
 update_battery() {
-    battery=$(printf '%s\n' "$(${SCRIPTS_DIR}/bat)")
+    battery=$(printf '%s\n' "$(bat)")
 }
 
 update_network() {
@@ -34,7 +34,7 @@ update_network() {
     ssid=$(iw $wlan_interface info | grep ssid | cut -d " " -f2)
 
     if [ ! -z "$ssid" ]; then
-	net="直  $ssid"
+	net="直 $ssid"
 	# elif [ ! -z "$lan" ] || [ $lan == 1 ]; then
 	#     net="囹Lan"
     else
@@ -45,7 +45,7 @@ update_network() {
 }
 
 display () {
-    xsetroot -name " $weather $net $nettraffic $battery $time $calendar"
+    xsetroot -name " ^c${color15}^[ ^c${color1}^$weather ^c${color15}^] [ ^c${color4}^$net ^c${color15}^] [ ^c${color3}^$nettraffic ^c${color15}^] [ ^c${color2}^$battery ^c${color15}^] [ ^c${color6}^$time ^c${color15}^] [ ^c${color7}^$calendar ^c${color15}^]"
 }
 
 
@@ -60,7 +60,7 @@ start() {
     while true; do
 	sleep 1 & wait && {
 	    # to update item ever n seconds with a offset of m
-	    ## [ $((sec % n)) -eq m ] && udpate_item
+	    # [ $((sec % n)) -eq m ] && udpate_item
 	    [ $((sec % 30 )) -eq 0 ] && update_time
 	    [ $((sec % 180)) -eq 0 ] && update_date
 	    [ $((sec % 60)) -eq 0 ] && update_weather
@@ -69,10 +69,10 @@ start() {
 	    [ $((sec % 5 )) -eq 0 ] && update_network_traffic
 
 	    # how often the display updates ( 5 seconds )
-	    [ $((sec % 5 )) -eq 0 ] && display
+	    [ $((sec % 5 )) -eq 0 ] && $(display)
 	    sec=$((sec + 1))
 	}
-    done
+done
 }
 
 $(start)

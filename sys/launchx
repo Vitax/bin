@@ -1,5 +1,6 @@
 #!/bin/sh -e
 
 x=$(which X)
+export WM=$1
 
 xinit ${HOME}/.xinitrc -- $x -nolisten tcp :0

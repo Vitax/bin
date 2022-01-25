@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -e
 
 usage() {
     >&2 echo 'usage: volume [-i value] [-d value] [-s value] [-t]' ;
@@ -14,7 +14,7 @@ dec() {
 }
 
 get() {
-    awk -F"[][]" '/dB/ { print $2 }' <(amixer sget Master)
+    printf '%s\n' $(amixer sget Master | grep Mono:| cut -d '[' -f2 | cut -d ']' -f1)
 }
 
 _set() {
@@ -31,14 +31,15 @@ mute() {
 
 main() {
     case "$1" in
-        --inc|-i) inc  "$2" ;;
-        --dec|-d) dec  "$2" ;;
-        --set|-s) _set "$2" ;;
-        --mute|-m) mute "$2" ;;
-        --toggle|-t) toggle ;;
-        --help|-h) usage ;;
-        *) get
+	--inc|-i) inc  "$2" ;;
+	--dec|-d) dec  "$2" ;;
+	--set|-s) _set "$2" ;;
+	--mute|-m) mute "$2" ;;
+	--toggle|-t) toggle ;;
+	--help|-h) usage ;;
+	*) get ;;
     esac
 }
 
 main "$@"
+
