@@ -45,7 +45,7 @@ update_network() {
 }
 
 display () {
-    xsetroot -name " ^c${color15}^[ ^c${color1}^$weather ^c${color15}^] [ ^c${color4}^$net ^c${color15}^] [ ^c${color3}^$nettraffic ^c${color15}^] [ ^c${color2}^$battery ^c${color15}^] [ ^c${color6}^$time ^c${color15}^] [ ^c${color7}^$calendar ^c${color15}^]"
+    xsetroot -name " ^c${foreground}^[ ^c${color1}^$weather ^c${foreground}^] [ ^c${color4}^$net ^c${foreground}^] [ ^c${color3}^$nettraffic ^c${foreground}^] [ ^c${color2}^$battery ^c${foreground}^] [ ^c${color6}^$time ^c${foreground}^] [ ^c${color5}^$calendar ^c${foreground}^]"
 }
 
 

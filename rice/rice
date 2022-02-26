@@ -56,11 +56,11 @@ cat > ${XDG_CACHE_HOME}/themes/dwm.h << EOF
 static const char *colors[][3] =
 {
     /* ["type"] = foreground, background, border */
-    [SchemeNorm] = { "$foreground", "$background", "$color7" },
-    [SchemeSel] = { "$color0", "$color2", "$color1" },
+    [SchemeNorm] = { "$foreground", "$background", "$background" },
+    [SchemeSel] = { "$color15", "$color2", "$color4" },
     [SchemeUrg] = { "$color1", "$background", "$color1" },
     [SchemeTabNorm] = { "$color7", "$color0", "$color7" },
-    [SchemeTabSel] = { "$color4", "$color0", "$color7" },
+    [SchemeTabSel] = { "$color8", "$color0", "$color7" },
 };
 EOF
 }
