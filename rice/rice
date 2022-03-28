@@ -57,10 +57,10 @@ static const char *colors[][3] =
 {
     /* ["type"] = foreground, background, border */
     [SchemeNorm] = { "$foreground", "$background", "$background" },
-    [SchemeSel] = { "$color15", "$color2", "$color4" },
+    [SchemeSel] = { "$color0", "$color4", "$color4" },
     [SchemeUrg] = { "$color1", "$background", "$color1" },
     [SchemeTabNorm] = { "$color7", "$color0", "$color7" },
-    [SchemeTabSel] = { "$color8", "$color0", "$color7" },
+    [SchemeTabSel] = { "$color0", "$color15", "$color7" },
 };
 EOF
 }
